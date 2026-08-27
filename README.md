@@ -44,7 +44,12 @@ flowchart LR
 | :--- | :--- | :---: | :---: |
 | **Class 1** | Python for GenAI & Agentic AI | 📓 [class-1_basic.ipynb](python/class-1_basic.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/F7NAM5gc8o4?si=prxGdvyf5f4soxB6) |
 | **Class 2** | Conditionals & Loops | 📓 [class-2_Conditionals_Loops_Lists.ipynb](python/class-2_Conditionals_Loops_Lists.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/CVmk5_dcxjs?si=OGnORuWU42U0BdKJ) |
-| **Class 3** | Lists, Tuples, Dictionaries & Sets | 📓 [Class-3_Lists_Tuples_Dictionaries_Sets.ipynb](python/Class-3_Lists_Tuples_Dictionaries_Sets.ipynb) | 🎬 [Watch Stream](https://youtube.com/playlist?list=PLIB2_OGEI7SI&si=t61zJPJAG82t1jzv) |
+| **Class 3** | Lists, Tuples, Sets & Dictionaries | 📓 [Class-3_Lists_Tuples_Dictionaries_Sets.ipynb](python/Class-3_Lists_Tuples_Dictionaries_Sets.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/KRYmLfOSL3I?si=GNofNypk2izHUMPm) |
+| **Class 4** | Python Functions | 📓 [Class-4_Functions.ipynb](python/Class-4_Functions.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/MHHPitVRfzY?si=ayX_d7Zt6g3UblEi) |
+| **Class 5** | Object-Oriented Programming (OOP) | 📓 [Class-5_OOP.ipynb](python/Class-5_OOP.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/vmm1Xx-NSbk?si=LxT9nGldrhW4tqH5) |
+| **Class 6** | Error Handling | 📓 [class-6_Error_Handling.ipynb](python/class-6_Error_Handling.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/NSTgCzS8zwk?si=GqSGfVgkOhGSqGQu) |
+| **Class 7** | **File Handling in Python** | 📓 [class-7_file_handling.py](python/class-7_file_handling.py) | 🎬 [Watch Recording](https://www.youtube.com/watch?v=xAoKEp3hGHY) |
+| **Class 8** | FastAPI | 📓 [Class-8_FastAPI.ipynb](python/Class-8_FastAPI.ipynb) | 🎬 [Watch Recording](https://www.youtube.com/live/VTj23cei8Tc?si=nUgnuHwl4Au9Y9ul) |
 | **Upcoming** | *Next sessions in pipeline...* | 🟡 Coming Soon | 🔔 Subscribe for notifications |
 
 ▶️ **[Access the Full YouTube Playlist](https://youtube.com/playlist?list=PLIB2_OGEI7SI&si=t61zJPJAG82t1jzv)**
@@ -149,6 +154,145 @@ retrieved_doc_ids = {"doc_101", "doc_102", "doc_101", "doc_103"}  # -> {'doc_101
 
 # 3. Tuple: Immutable Metadata Dimensions
 embedding_dimensions = (1536, "text-embedding-3-small")
+```
+
+</details>
+
+<details>
+<summary><b>Class 4: Python Functions — Interview Question</b></summary>
+
+<br>
+
+### ❓ Question:
+How would you design a reusable function for calling an LLM when the caller may provide optional settings such as `model`, `temperature`, and `max_tokens`?
+
+### 💡 Answer:
+Use explicit parameters for required inputs and `**kwargs` for optional named settings. This keeps the function easy to call while allowing new API options to be added without changing its signature. Default values can be merged with caller-provided settings.
+
+```python
+def build_llm_config(model="gpt-3.5", temperature=0.5, **settings):
+    config = {
+        "model": model,
+        "temperature": temperature,
+    }
+    config.update(settings)
+    return config
+
+config = build_llm_config(
+    model="gpt-4",
+    temperature=0.7,
+    max_tokens=500,
+)
+```
+
+</details>
+
+<details>
+<summary><b>Class 5: Object-Oriented Programming (OOP) — Interview Question</b></summary>
+
+<br>
+
+### ❓ Question:
+How can OOP be used to model different AI assistants while keeping their state and behavior organized?
+
+### 💡 Answer:
+Create a base class for shared state and behavior, then use inheritance and method overriding for specialized assistants. Each object keeps its own attributes, such as conversation history, while polymorphism allows different assistant types to expose the same method with different implementations.
+
+```python
+class Assistant:
+    def __init__(self, name):
+        self.name = name
+        self.history = []
+
+    def respond(self, message):
+        self.history.append(message)
+        return f"[{self.name}] {message}"
+
+
+class RAGAssistant(Assistant):
+    def respond(self, message):
+        return f"[{self.name}] Searching documents for: {message}"
+```
+
+</details>
+
+<details>
+<summary><b>Class 6: Error Handling — Interview Question</b></summary>
+
+<br>
+
+### ❓ Question:
+Why should an application catch specific exceptions instead of using a bare `except` block when processing user input or an API response?
+
+### 💡 Answer:
+Specific exceptions make the failure understandable and prevent unrelated programming errors from being hidden. For example, invalid user input should be handled as a `ValueError`, while a missing file should be handled as a `FileNotFoundError`. `finally` can be used for cleanup that must happen whether the operation succeeds or fails.
+
+```python
+try:
+    age = int(user_input)
+except ValueError:
+    print("Please enter a valid number.")
+else:
+    print("Age accepted:", age)
+finally:
+    print("Input processing finished.")
+```
+
+</details>
+
+<details>
+<summary><b>Class 7: File Handling in Python — Interview Question</b></summary>
+
+<br>
+
+### ❓ Question:
+How would you persist an AI agent's configuration to a file and load it safely when the application starts?
+
+### 💡 Answer:
+Use the `json` module for structured configuration and open files with a context manager so they are closed automatically. `encoding="utf-8"` supports text consistently, and exceptions such as `FileNotFoundError` or `json.JSONDecodeError` can be handled to provide a useful fallback.
+
+```python
+from pathlib import Path
+import json
+
+config_path = Path("agent_config.json")
+config = {"model": "gpt-4", "temperature": 0.2}
+
+with config_path.open("w", encoding="utf-8") as file:
+    json.dump(config, file, indent=2)
+
+with config_path.open("r", encoding="utf-8") as file:
+    loaded_config = json.load(file)
+```
+
+</details>
+
+<details>
+<summary><b>Class 8: FastAPI — Interview Question</b></summary>
+
+<br>
+
+### ❓ Question:
+How would you expose a Python function as a validated API endpoint that could later power an LLM or RAG application?
+
+### 💡 Answer:
+Define a FastAPI application, use an HTTP method that matches the operation, and declare a request model with Pydantic. FastAPI uses the type hints to validate incoming data and generate OpenAPI documentation automatically. A `POST` endpoint is appropriate when the client sends a prompt or note to be processed.
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+
+class ChatRequest(BaseModel):
+    prompt: str
+    temperature: float = 0.7
+
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    return {"reply": f"Received: {request.prompt}"}
 ```
 
 </details>
